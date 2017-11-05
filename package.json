@@ -1,0 +1,14 @@
+{
+  "name": "tide",
+  "version": "0.0.1",
+  "description": "No frills node js framework with injector at its core",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^7.0.18",
+    "@types/reflect-metadata": "0.0.5",
+    "reflect-metadata": "^0.1.10",
+    "typescript": "^2.6.1",
+    "url-pattern": "^1.0.3"
+  }
+}
