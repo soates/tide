@@ -1,14 +1,22 @@
 {
   "name": "tide",
   "version": "0.0.1",
-  "description": "No frills node js framework with injector at its core",
+  "description": "No frills node js framework with injection at its core",
   "author": "",
   "license": "ISC",
+  "scripts": {
+    "test": "tsc && ava --verbose -c 1"
+  },
   "dependencies": {
     "@types/node": "^7.0.18",
     "@types/reflect-metadata": "0.0.5",
     "reflect-metadata": "^0.1.10",
     "typescript": "^2.6.1",
     "url-pattern": "^1.0.3"
+  },
+  "devDependencies": {
+    "ava": "^0.20.0",
+    "@types/axios": "^0.14.0",
+    "axios": "^0.17.0"
   }
 }

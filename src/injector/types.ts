@@ -5,5 +5,6 @@ export interface InjectionState {
 export interface Injectable {
     name: string;
     obj: any;
+    args: any;
     state: InjectionState;
 }

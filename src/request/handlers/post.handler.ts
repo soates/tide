@@ -50,7 +50,7 @@ export class PostHandler implements RequestHandler {
 
             request.on('end', async () => {
 
-                payload = parse(payload);
+                payload = JSON.parse(payload);
 
                 type cType = typeof target;
 

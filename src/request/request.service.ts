@@ -8,16 +8,15 @@ import { PostHandler } from './handlers/post.handler';
 @Inject()
 export class RequestService {
 
-    public request: IncomingMessage;
-
     private handlers;
 
-    constructor(getHandler: GetHandler,
-        postHandler: PostHandler) {
+    constructor(private getHandler: GetHandler,
+        private postHandler: PostHandler,
+        private request: IncomingMessage) {
 
         this.handlers = {
-            'GET': getHandler,
-            'POST': postHandler
+            'GET': this.getHandler,
+            'POST': this.postHandler
         };
 
     }

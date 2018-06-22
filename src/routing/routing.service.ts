@@ -18,14 +18,15 @@ export class RoutingService {
 
     public resolve(verb, path): any {
 
-        let pattern = new UrlPattern(path)
-
         let verbRoutes = this.routes.filter(f => f.meta.verb === verb);
 
         for (let i = 0; i < verbRoutes.length; i++) {
-            var route = verbRoutes[i];
 
-            let match = pattern.match(route.meta.route);
+            let route = verbRoutes[i];
+            
+            let pattern = new UrlPattern(route.meta.route)
+
+            let match = pattern.match(path);
 
             if (match !== null) {
                 return { route, args: match };

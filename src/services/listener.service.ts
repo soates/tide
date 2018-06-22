@@ -20,6 +20,16 @@ export class ListenerService {
         this.routingService = this.state.get<RoutingService>(RoutingService);
     }
 
+    public createRequestContext(request: Http.IncomingMessage): Injector {
+
+        const requestInjector = this.state.createChild();
+
+        requestInjector.register<RequestService>(RequestService, { request });
+
+        return requestInjector;
+
+    }
+
     public async listen(port: number): Promise<any> {
 
         const server = Http.createServer(async (request, response) => {
@@ -28,33 +38,36 @@ export class ListenerService {
 
             if (matchedRoute !== null) {
 
-                const requestInjector = this.state.createChild();
+                try {
 
-                let requestResult = await profileAsync('Request', async () => {
+                    const requestInjector = this.createRequestContext(request);
 
-                    requestInjector.register<RequestService>(RequestService);
+                    let requestResult = await requestInjector
+                        .get<RequestService>(RequestService)
+                        .handleRequest(requestInjector, matchedRoute);
 
-                    const reqService: RequestService = requestInjector
-                        .get<RequestService>(RequestService);
+                    response.setHeader('Content-Type', 'application/json');
 
-                    reqService.request = request;
+                    response.end(JSON.stringify(requestResult.data));
 
-                    return await reqService.handleRequest(requestInjector, matchedRoute);
+                } catch (error) {
 
-                })
+                    this.errorService.log(error);
 
-                response.setHeader('Content-Type', 'application/json');
+                    response.statusCode = 500;
 
-                response.end(JSON.stringify(requestResult));
+                    response.end();
+                }
+
+
 
             } else {
 
                 response.statusCode = 404;
+
                 response.end();
 
             }
-
-            console.time("Request End");
 
         })
 

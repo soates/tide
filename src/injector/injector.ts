@@ -22,9 +22,9 @@ export class Injector {
 
     }
 
-    public register<T>(imp: Function): void {
+    public register<T>(imp: Function, args: any = undefined): void {
 
-        this.items.push(this.registerType(imp));
+        this.items.push(this.registerType(imp, args));
 
     }
 
@@ -50,11 +50,12 @@ export class Injector {
 
     }
 
-    public build<T>(type: Function): T {
+    public build<T>(type: Function, args: any = undefined): T {
 
         let candidate = {
             name: type.name,
             obj: type,
+            args: args,
             state: undefined,
         };
 
@@ -83,11 +84,12 @@ export class Injector {
 
     }
 
-    private registerType(target: Function): Injectable {
+    private registerType(target: Function, args: any): Injectable {
 
         return {
             name: target.name,
             obj: target,
+            args: args,
             state: undefined,
         };
 
@@ -96,11 +98,13 @@ export class Injector {
 
     private resolveTypeWithParams(candidate: Injectable, deps: Array<any>): any {
 
-        let args = new Array(deps.length);
+        let injectableDeps = deps.filter(d => Reflect.getMetadata(MetaKeys.INJECTABLE, d));
 
-        for (let i = 0; i < deps.length; i++) {
+        let args = new Array(injectableDeps.length);
 
-            let d = deps[i];
+        for (let i = 0; i < injectableDeps.length; i++) {
+
+            let d = injectableDeps[i];
 
             let injectable = Reflect.getMetadata(MetaKeys.INJECTABLE, d);
 
@@ -112,7 +116,18 @@ export class Injector {
             }
         }
 
-        let ctor = (cargs) => new candidate.obj(...cargs);
+        let ctor = (cargs: Array<any>) => {
+
+            if (candidate.args === undefined) {
+                return new candidate.obj(...cargs);
+            }
+
+            Object.keys(candidate.args)
+                .forEach(k => cargs.push(candidate.args[k]));
+
+            return new candidate.obj(...cargs);
+
+        }
 
         candidate.state = {
             instance: ctor(args)
@@ -125,7 +140,7 @@ export class Injector {
     private resolveTypeWithoutParams(candidate: Injectable): any {
 
         candidate.state = {
-            instance: new candidate.obj(),
+            instance: new candidate.obj(...candidate.args || []),
         };
 
         this.items[this.items.findIndex(i => i.name === candidate.name)] = candidate;

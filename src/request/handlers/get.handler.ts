@@ -1,6 +1,7 @@
 import { IncomingMessage } from 'http';
 import { Injector, Inject } from '../../injector/injector';
 import { RequestHandler, RequestResult } from "./request.handler";
+import { error } from 'util';
 
 @Inject()
 export class GetHandler implements RequestHandler {

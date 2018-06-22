@@ -1,4 +1,4 @@
-import { Inject } from './../build/src/injector/inject-meta';
+import { Inject } from '../src/tide';
 import { Controller, Get, Post } from "../src/tide";
 import { TodoService } from "./todo.service";
 
@@ -13,6 +13,12 @@ export class TodoController {
     public async get(): Promise<any> {
 
         return await this.service.items;
+    }
+
+    @Get('/:name')
+    public async getByName({ name }): Promise<any> {
+
+        return await this.service.items.find(i => i.name === name);
     }
 
     @Post('/')
